@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly/core';
 
+// defines new theme pyTheme
 Blockly.Themes.Python = Blockly.Theme.defineTheme('pyTheme', {
     'base':Blockly.Themes.Classic,
     'componentStyles': {
@@ -15,6 +16,7 @@ Blockly.Themes.Python = Blockly.Theme.defineTheme('pyTheme', {
       'cursorColour': '#d0d0d0',
       'blackBackground': '#333'
     },
+    // category styles to replace category colours
     'categoryStyles': {
         'class_category': {
             'colour': '#FFA500'
@@ -35,6 +37,7 @@ Blockly.Themes.Python = Blockly.Theme.defineTheme('pyTheme', {
           'colour': '#ff85c1'
         }
     },
+    // block styles to replace block colours
     'blockStyles': {
       'logic_blocks': {
         'colourPrimary': '%{BKY_MATH_HUE}'

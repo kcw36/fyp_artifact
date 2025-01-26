@@ -16,7 +16,7 @@ class testGenerator extends PythonGenerator {
     /**
      * @overide
      * finish the code generation
-     * does not add variable global declartions like base generator
+     * does not add variable global declerations like base generator
      */
     finish(code) {
         // Convert the definitions dictionary into a list.
@@ -42,5 +42,3 @@ class testGenerator extends PythonGenerator {
 }
 
 export const customGenerator = new testGenerator('python');
-
-

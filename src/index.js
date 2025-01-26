@@ -17,9 +17,10 @@ Object.assign(customGenerator.forBlock, forBlock);
 
 // Set up UI elements and inject Blockly
 const codeDiv = document.getElementById('generatedCode').firstChild;
-// output div selection if needed for executed code
+// output div and button selection
 const blocklyDiv = document.getElementById('blocklyDiv');
 const outputBtn = document.getElementById('outputButton');
+const outputDiv = document.getElementById('output');
 
 const ws = Blockly.inject(blocklyDiv, {
   renderer: 'custom_renderer',
@@ -33,7 +34,7 @@ const ws = Blockly.inject(blocklyDiv, {
     } 
 });
 
-//Returns an array of objects.
+// Returns an array of JSON variable blocks.
 var fillVariables = function(ws) {
   let blockList = [];
 
@@ -86,12 +87,7 @@ var fillVariables = function(ws) {
   return blockList;
 };
 
-// Associates the function with the string 'var_category'
-ws.registerToolboxCategoryCallback(
-  'var_category', fillVariables
-);
-
-//Returns an array of objects.
+// Returns an array of function blocks.
 var fillFunctions = function(ws) {
   let blockList = [];
 
@@ -106,6 +102,7 @@ var fillFunctions = function(ws) {
       'NAME': 'my_function',
     }
   });
+  // using procedure map generate matching call blocks
   for (const model of mainWorkspace.getProcedureMap().getProcedures()) {
     
     blockList.push({
@@ -122,18 +119,19 @@ var fillFunctions = function(ws) {
     });
   }
 
+  // provide return block
   blockList.push({
     'kind': 'block',
     'type': 'python_return'
   })
 
+  // provide yield block
   blockList.push({
     'kind': 'block',
     'type': 'python_yield'
   })
 
-  // let varBlockList = []
-
+  // generate function parameter blocks
   for (let i = 0; i<varBlocks.length; i++) {
     if (varBlocks[i].type == 'param') {
       blockList.push({
@@ -151,25 +149,22 @@ var fillFunctions = function(ws) {
   return blockList;
 };
 
-// Associates function with the string 'func_categeory'
+// register functions with their associated buttons
+var createVariable = function(button) {
+  Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace(), null, 'Variable');
+};
+
+// register callbacks with a toolbox category
+ws.registerToolboxCategoryCallback(
+  'var_category', fillVariables
+);
 ws.registerToolboxCategoryCallback(
   'func_category', fillFunctions
 );
 
-var createVariable = function(button) {
-  Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace(), null, 'Variable');
-}
-
-var createFunction = function(button) {
-  Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace(), null, 'Function');
-}
-
+// Register callback functions with their associated functions
 ws.registerButtonCallback(
   'create_variable_button', createVariable
-);
-
-ws.registerButtonCallback(
-  'create_function_button', createFunction
 );
 
 // This function resets the code and output divs, shows the
@@ -179,24 +174,26 @@ export const runCode = () => {
   const pythonCode = customGenerator.workspaceToCode(ws);
   if (!pythonCode) {
     codeDiv.innerText = "Generated Code Will Appear Here:\n" + pythonCode;
+    outputDiv.innerText = "Executed Code Will Appear Here:";
     return;
   }
   codeDiv.innerText = pythonCode;
 };
 
+// output button 
 outputBtn.onclick = (event) => {
   var prog = customGenerator.workspaceToCode(ws);
-  document.getElementById('output').innerText = "";
+  outputDiv.innerText = "";
 
   // empty the code output pane if the generation pane is empty
   if (!prog) {
-    document.getElementById('output').innerText = "Executed Code Will Appear Here:";
+    outputDiv.innerText = "Executed Code Will Appear Here:";
     return;
   }
 
   // on filled generation pane trigger skulpt to generate executed code for output
   Sk.configure({
-    output: function(text) { document.getElementById('output').innerText += text; },
+    output: function(text) { outputDiv.innerText += text; },
     read: function(x) {
         if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
             throw "File not found: '" + x + "'";
@@ -209,7 +206,7 @@ outputBtn.onclick = (event) => {
   }).then(function(mod) {
       console.log('Program execution completed successfully');
   }).catch(function(err) {
-      document.getElementById('output').textContent = err.toString();
+    outputDiv.textContent = err.toString();
   });
 }
 

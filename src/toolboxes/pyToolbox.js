@@ -1,9 +1,11 @@
+// toolbox contents 
 export const toolbox = {
   'kind': 'categoryToolbox',
   'contents': [
     {
       'kind': 'sep'
     },
+    // dynamic category generated from index.js
     {
       'kind': 'category',
       'name': 'Variables',
@@ -13,6 +15,7 @@ export const toolbox = {
     {
       'kind': 'sep'
     },
+    // dynamic category generated from index.js
     {
       'kind': 'category',
       'name': 'Functions',

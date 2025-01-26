@@ -205,10 +205,19 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
     init() {
         super.init();
 
+        /**
+         * @override
+         * adds new methods for square connections on inputs and statements
+         */
         this.RECT_PREV_NEXT = this.makeRectangularPreviousConn();
         this.RECT_INPUT_OUTPUT = this.makeRectangularInputConn();
     }
 
+    /**
+     * @override
+     * controls connection type return for different Blockly connection types
+     * Modifies value and statement connections to use the new methods
+     */
     shapeFor(connection) {
         switch (connection.type) {
             case Blockly.INPUT_VALUE:
@@ -222,6 +231,10 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
         }
     }
 
+    /**
+     * @override
+     * creates path for a rectangular statement connection
+     */
     makeRectangularPreviousConn() {
         const width = this.NOTCH_WIDTH;
         const height = this.NOTCH_HEIGHT;
@@ -246,6 +259,10 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
         }
     }
 
+    /**
+     * @override
+     * creates path for a rectangular value connection
+     */
     makeRectangularInputConn() {
         const width = this.TAB_WIDTH;
         const height = this.TAB_HEIGHT;

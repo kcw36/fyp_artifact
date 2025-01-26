@@ -37,6 +37,7 @@ const pyStringSpeech = {
   'output': 'String' 
 }
 
+// required plugin for using multi line text fields
 registerFieldMultilineInput();
 const pyStringMultiline = {
   'type': 'python_stringMulti',
@@ -187,10 +188,13 @@ const pySplit = {
   'mutator': 'split_mutator'
 }
 
+// mutator for .split method
 Blockly.Blocks['pySplit'] = {
+  // initiate JSON block definition
   init: function() {
     this.jsonInit(pySplit);
   },  
+  // define new context menu options
   customContextMenu: function(options) {
     var block = this;
     var option_addSep = {
@@ -211,36 +215,37 @@ Blockly.Blocks['pySplit'] = {
   },
 }
 
-// mutators for adding options to python function
+// mutators for adding options to .split function
 const splitMutator = {
+  // count of seperator parameters included in method
   sep: 0,
 
+  // return seperator count
   saveExtraState: function() {
     return{
       'sep': this.sep
     };
   },
 
+  // load seperator count
   loadExtraState: function(state) {
     this.updateShape_(state['sep']);
   },
 
+  // repetition of saveExtraState logic for outdated DOM objects
   mutationToDom: function () {
     const container = Blockly.utils.xml.createElement('mutation');
     container.setAttribute('sep', this.sep);
     return container;
   },
 
-  /**
-   * Parses XML to restore the text inputs.
-   * @param {!Element} xmlElement XML storage element.
-   * @this {Blockly.Block}
-   */
+  // repetition of loadExtraState logic for outdated DOM objects
   domToMutation: function (xmlElement) {
     const sepCount = parseInt(xmlElement.getAttribute('sep'), 10);
     this.updateShape_(sepCount);
   },
 
+  // if expectation of seperator parameters doesn't match what is found on the block retrigger function to add or delete parameters
   updateShape_: function(sepCount) {
     while (this.sep < sepCount) {
       this.addSep_();
@@ -250,7 +255,9 @@ const splitMutator = {
     };
   },
 
+  // add paramaeter that matches term parameter
   addPart_: function(term) {
+    // get current local value for term attache to the block
     const i = Object.getOwnPropertyDescriptor(this, term).value;
 
     if (i == 1) {
@@ -267,6 +274,7 @@ const splitMutator = {
     }
   },
 
+  // remove parameter that matches term
   removePart_: function(term) {
     const i = Object.getOwnPropertyDescriptor(this, term).value;
 
@@ -285,6 +293,7 @@ const splitMutator = {
     }
   },
 
+  // add seperator parameter and trigger change event to reload workspace
   addSep_: function() {
     Blockly.Events.setGroup(true);
     const oldExtraState = getExtraBlockState(this);
@@ -305,6 +314,7 @@ const splitMutator = {
     Blockly.Events.setGroup(false);
   },
 
+  // remove seperator parameter and trigger change event to reload workspace
   delSep_: function() {
     Blockly.Events.setGroup(true);
     const oldExtraState = getExtraBlockState(this);
